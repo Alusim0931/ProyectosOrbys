@@ -29,7 +29,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.pruebamoviedb.R
 import kotlinx.coroutines.launch
+import com.example.pruebamoviedb.ui.screens.MovieCard
 
 
 @Composable
@@ -72,7 +74,7 @@ fun MyAppWithDrawer(isDarkTheme: MutableState<Boolean>) {
                 }
             },
             content = {
-                // Contenido principal de la aplicación
+                MovieCard(movieTitle = "Oppenhaimer" , movieImage = R.drawable.oppenhaimer)
             }
         )
     }
