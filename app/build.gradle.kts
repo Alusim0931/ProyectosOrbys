@@ -43,7 +43,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.5"
     }
     packaging {
         resources {
@@ -53,6 +53,8 @@ android {
 }
 
 dependencies {
+
+    implementation ("androidx.compose.material:material-icons-extended:1.5.4")
 
     implementation("androidx.core:core-ktx:1.12.0")
 
@@ -92,6 +94,8 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+
 
     ksp("com.google.dagger:hilt-compiler:$hiltVersion")
 }
