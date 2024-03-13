@@ -1,4 +1,4 @@
-package com.example.pruebamoviedb.ui.viewmodels
+package com.example.pruebamoviedb.ui.components
 
 data class DataMovies(
     val title: String,

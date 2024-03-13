@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.example.pruebamoviedb.R
 import kotlinx.coroutines.launch
 import com.example.pruebamoviedb.ui.screens.MovieList
-import com.example.pruebamoviedb.ui.viewmodels.DataMovies
+import com.example.pruebamoviedb.ui.components.DataMovies
 
 
 @Composable

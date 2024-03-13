@@ -1,4 +1,5 @@
 package com.example.pruebamoviedb.domain.models
 
-class MovieList {
-}
+class MoviesList (
+    val movieDTOList: List<String>
+)
