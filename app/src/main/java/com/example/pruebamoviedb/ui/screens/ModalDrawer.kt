@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brightness2
 import androidx.compose.material.icons.filled.Brightness5
-import androidx.compose.material.icons.filled.Brightness6
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,13 +29,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pruebamoviedb.R
 import kotlinx.coroutines.launch
-import com.example.pruebamoviedb.ui.screens.MovieCard
+import com.example.pruebamoviedb.ui.screens.MovieList
+import com.example.pruebamoviedb.ui.viewmodels.DataMovies
 
 
 @Composable
 fun MyApp() {
     val isDarkTheme = remember { mutableStateOf(false) }
     MyAppWithDrawer(isDarkTheme)
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,6 +46,7 @@ fun MyAppWithDrawer(isDarkTheme: MutableState<Boolean>) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -53,7 +54,11 @@ fun MyAppWithDrawer(isDarkTheme: MutableState<Boolean>) {
         ) {
             IconButton(onClick = {
                 scope.launch {
-                    drawerState.open()
+                    if (drawerState.isOpen) {
+                        drawerState.close()
+                    } else {
+                        drawerState.open()
+                    }
                 }
             }) {
                 Icon(
@@ -74,7 +79,13 @@ fun MyAppWithDrawer(isDarkTheme: MutableState<Boolean>) {
                 }
             },
             content = {
-                MovieCard(movieTitle = "Oppenhaimer" , movieImage = R.drawable.oppenhaimer)
+                val movies = listOf(
+                    DataMovies("Oppenhaimer", R.drawable.oppenhaimer),
+                    DataMovies("Dune", R.drawable.dune),
+                    DataMovies("Kung Fu Panda 4", R.drawable.panda4)
+                )
+
+                MovieList(movies = movies) {}
             }
         )
     }
