@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -21,20 +20,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.pruebamoviedb.ui.components.DataMovies
+import com.example.pruebamoviedb.domain.models.MoviesList
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MovieList(movies: List<DataMovies>, onMovieClick: (String) -> Unit) {
+fun MovieList(movies: MoviesList, onMovieClick: (String) -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(movies) { (title, image) ->
-                MovieCard(movieTitle = title, movieImage = image, onMovieClick = { onMovieClick(title) })
-            }
+
         }
     }
 }

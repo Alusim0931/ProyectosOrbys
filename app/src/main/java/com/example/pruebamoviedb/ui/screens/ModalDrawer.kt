@@ -30,9 +30,10 @@ import androidx.compose.ui.unit.sp
 import com.example.pruebamoviedb.R
 import kotlinx.coroutines.launch
 import com.example.pruebamoviedb.ui.screens.MovieList
-import com.example.pruebamoviedb.ui.components.DataMovies
 
 
+
+/*
 @Composable
 fun MyApp() {
     val isDarkTheme = remember { mutableStateOf(false) }
@@ -72,23 +73,8 @@ fun MyAppWithDrawer(isDarkTheme: MutableState<Boolean>) {
 
         ModalNavigationDrawer(
             drawerState = drawerState,
-            drawerContent = {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = "Configuración", style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold))
-                    Spacer(modifier = Modifier.height(24.dp))
-                }
-            },
-            content = {
-                val movies = listOf(
-                    DataMovies("Oppenhaimer", R.drawable.oppenhaimer),
-                    DataMovies("Dune", R.drawable.dune),
-                    DataMovies("Kung Fu Panda 4", R.drawable.panda4)
-                )
 
-                MovieList(movies = movies) {}
-            }
-        )
-    }
+
 }
 
 @Composable
@@ -101,4 +87,4 @@ fun ThemeToggleButton(isDarkTheme: MutableState<Boolean>, onToggle: (Boolean) ->
             contentDescription = if (isDarkTheme.value) "Cambiar a modo claro" else "Cambiar a modo oscuro"
         )
     }
-}
+}*/

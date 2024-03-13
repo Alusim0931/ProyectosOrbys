@@ -4,4 +4,6 @@ package com.example.pruebamoviedb.domain.models
      val title: String,
      val releaseDate: String,
      val posterPath: String,
+     val overview: String,
+     val voteAverage: Double,
  )

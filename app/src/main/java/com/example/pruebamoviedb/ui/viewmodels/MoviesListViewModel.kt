@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-private const val MAX_MOVIES = 10
+private const val MAX_MOVIES = 1000
 @HiltViewModel
 class MoviesListViewModel @Inject constructor(private val useCase: GetMovieListUseCase): ViewModel() {
     private var _moviesList = MutableLiveData<MoviesList?>()

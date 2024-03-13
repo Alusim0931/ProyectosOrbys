@@ -13,7 +13,9 @@ class MoviesDataMapper @Inject constructor(val moviesResultDTO: MoviesResultDTO)
             val movies = Movies(
                 moviesResultDTO.title,
                 moviesResultDTO.release_date,
-                moviesResultDTO.poster_path
+                moviesResultDTO.poster_path,
+                moviesResultDTO.overview,
+                moviesResultDTO.vote_average,
             )
             return movies
         }

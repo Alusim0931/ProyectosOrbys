@@ -1,6 +1,6 @@
 package com.example.pruebamoviedb.ui.components
 
-data class DataMovies(
+/*data class DataMovies(
     val title: String,
-    val image: Int
-)
+    val imageUrl: String
+)*/

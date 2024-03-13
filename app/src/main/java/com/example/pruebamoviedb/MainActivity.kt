@@ -1,6 +1,5 @@
 package com.example.pruebamoviedb
 
-import MyAppWithDrawer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,9 +14,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.pruebamoviedb.ui.screens.MovieCard
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.pruebamoviedb.ui.screens.MovieListScreen
 import com.example.pruebamoviedb.ui.theme.PruebaMovieDBTheme
+import com.example.pruebamoviedb.ui.viewmodels.MoviesListViewModel
+import com.example.pruebamoviedb.ui.viewmodels.MoviesViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +35,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MyAppWithDrawer(isDarkTheme)
+                    val listViewModel: MoviesListViewModel = hiltViewModel()
+                    val detailViewModel: MoviesViewModel = hiltViewModel()
+                    val navController = rememberNavController()
+                    MovieListScreen(listViewModel, detailViewModel, navController, isDarkTheme)
                 }
             }
         }
