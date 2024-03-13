@@ -1,4 +1,7 @@
 package com.example.pruebamoviedb.domain.models
 
-class Movies {
-}
+ data class Movies (
+     val title: String,
+     val releaseDate: String,
+     val posterPath: String,
+ )

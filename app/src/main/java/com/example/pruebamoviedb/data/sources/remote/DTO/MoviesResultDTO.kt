@@ -1,6 +1,6 @@
 package com.example.pruebamoviedb.data.sources.remote.DTO
 
-data class Result(
+data class MoviesResultDTO(
     val adult: Boolean,
     val backdrop_path: String,
     val genre_ids: List<Int>,
