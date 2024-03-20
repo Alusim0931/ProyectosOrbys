@@ -13,5 +13,4 @@ interface MoviesAPIService {
     @GET("movie/{title}")
     suspend fun getMovies(@Path("title") title: String): MoviesResultDTO
 
-
 }
