@@ -1,53 +1,53 @@
 package com.example.pruebamoviedb.di
 
-import com.example.pruebamoviedb.data.repositories.MoviesDetailRepositoryImpl
+import android.app.Application
+import androidx.room.Room
 import com.example.pruebamoviedb.data.sources.local.LocalDataMoviesSource
+import com.example.pruebamoviedb.data.sources.local.MovieDatabase
 import com.example.pruebamoviedb.data.sources.remote.MoviesAPIService
-import com.example.pruebamoviedb.data.sources.remote.MoviesRemoteDataSource
-import com.example.pruebamoviedb.domain.repositories.IMovieDetailRepository
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
+
 object NetworkModule {
-    @Provides
-    @Singleton
-    fun provideGson(): Gson {
-        return GsonBuilder()
-            .setLenient()
-            .create()
+    private val interceptor: HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
     }
+
+    private val client: OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(interceptor)
+        .build()
 
     @Provides
     @Singleton
-    fun provideRetrofit(gson: Gson): Retrofit {
+    fun provideRetrofit(): MoviesAPIService {
         return Retrofit.Builder()
-            .baseUrl("https://api.themoviedb.org/3/")
+            .baseUrl(MoviesAPIService.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
             .build()
+            .create(MoviesAPIService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideMoviesService(retrofit: Retrofit): MoviesAPIService {
-        return retrofit.create(MoviesAPIService::class.java)
+    fun providesMovieDatabase(app: Application): MovieDatabase {
+        return Room.databaseBuilder(
+            app,
+            MovieDatabase::class.java,
+            "moviedb.db"
+        ).build()
     }
-
-    @Provides
-    @Singleton
-    fun provideMoviesDetailRepository(moviesLocalDataSource: LocalDataMoviesSource,
-                                      moviesRemoteDataSource: MoviesRemoteDataSource): IMovieDetailRepository {
-        return MoviesDetailRepositoryImpl(moviesLocalDataSource, moviesRemoteDataSource)
-    }
-
-
 
 }

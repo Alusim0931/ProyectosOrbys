@@ -1,13 +1,12 @@
 package com.example.pruebamoviedb.domain.usercases
 
-import com.example.pruebamoviedb.data.repositories.MoviesDetailRepositoryImpl
-import com.example.pruebamoviedb.domain.models.Movies
-import com.example.pruebamoviedb.domain.models.MoviesList
+import com.example.pruebamoviedb.data.repositories.MoviesRemoteDataSource
+import com.example.pruebamoviedb.data.sources.remote.DTO.ListMoviesDTO
 import javax.inject.Inject
 
-class GetMovieDetailUseCase @Inject constructor(private val movieRepository: MoviesDetailRepositoryImpl) {
+class GetPopularMoviesUseCase @Inject constructor(private val movieRepository: MoviesRemoteDataSource) {
 
-    suspend fun getMoviesDetail(title: String): Movies {
-        return movieRepository.getMoviesData(title)
+    suspend fun getPopularMovies(category: String): ListMoviesDTO {
+        return movieRepository.getMoviesLimit(category)
     }
 }

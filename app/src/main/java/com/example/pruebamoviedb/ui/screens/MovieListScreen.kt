@@ -1,5 +1,6 @@
 package com.example.pruebamoviedb.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,10 +25,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
@@ -38,101 +44,50 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
-import com.example.pruebamoviedb.ui.viewmodels.MoviesListViewModel
-import com.example.pruebamoviedb.ui.viewmodels.MoviesViewModel
+import coil.size.Size
+import com.example.pruebamoviedb.data.sources.remote.MoviesAPIService
+import com.example.pruebamoviedb.ui.components.MovieItem
+import com.example.pruebamoviedb.ui.viewmodels.MovieListState
+import com.example.pruebamoviedb.ui.viewmodels.MovieListUiEvent
+import com.example.pruebamoviedb.ui.viewmodels.MovieListViewModel
+import com.example.pruebamoviedb.util.Category
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MovieListScreen(
-    listViewModel: MoviesListViewModel,
-    detailViewModel: MoviesViewModel,
+fun PopularMoviesScreen(
+    movieListState: MovieListState,
     navController: NavHostController,
-    isDarkTheme: MutableState<Boolean>
+    onEvent: (MovieListUiEvent) -> Unit
 ) {
-    val movieList by listViewModel.moviesList.observeAsState()
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val coroutineScope = rememberCoroutineScope()
 
-
-    Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+    if (movieListState.popularMovieList.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            IconButton(onClick = {
-                coroutineScope.launch {
-                    if (drawerState.isOpen) {
-                        drawerState.close()
-                    } else {
-                        drawerState.open()
-                    }
-                }
-            }) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "Menu",
-                    tint = Color.Blue
-                )
-            }
-            ThemeToggleButton(isDarkTheme) { newValue -> isDarkTheme.value = newValue }
+            CircularProgressIndicator()
         }
+    } else {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp)
+        ) {
+            items(movieListState.popularMovieList.size) { index ->
+                MovieItem(
+                    movie = movieListState.popularMovieList[index],
+                    navHostController = navController
+                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-        ModalNavigationDrawer(
-            drawerState = drawerState,
-            drawerContent = {
-                Text("Contenido del Drawer")
-            },
-            content = {
-                if (movieList != null) {
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                    ) {
-
-
-                        items(movieList?.movieDTOList!!.size) {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        detailViewModel.initialized(title = movieList!!.movieDTOList[it])
-                                        navController.navigate("MovieDetailScreen")
-                                    },
-                                shape = RoundedCornerShape(16.dp),
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(16.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = movieList!!.movieDTOList[it].capitalize(),
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 18.sp,
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = if (it == 0) "TOP #${it + 1}\uD83C\uDFC6" else "TOP #${it + 1}",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp,
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    CircularProgressIndicator()
+                if (index >= movieListState.popularMovieList.size - 1 && !movieListState.isLoading) {
+                    onEvent(MovieListUiEvent.Paginate(Category.POPULAR))
                 }
+
             }
-        )
+        }
     }
+
 }
 
 @Composable

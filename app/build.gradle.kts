@@ -83,6 +83,13 @@ dependencies {
 
     implementation("io.coil-kt:coil-compose:2.5.0")
 
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+    ksp("androidx.room:room-compiler:2.6.0")
+    implementation("androidx.room:room-ktx:2.6.0")
+    implementation("androidx.room:room-paging:2.6.0")
+
 
 
     implementation("androidx.compose.ui:ui-graphics")

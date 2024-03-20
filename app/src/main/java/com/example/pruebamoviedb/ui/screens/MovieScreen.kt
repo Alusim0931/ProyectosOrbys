@@ -1,65 +1,185 @@
 package com.example.pruebamoviedb.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ImageNotSupported
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.pruebamoviedb.domain.models.MoviesList
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Size
+import com.example.pruebamoviedb.R
+import com.example.pruebamoviedb.data.sources.remote.MoviesAPIService
+import com.example.pruebamoviedb.domain.models.MoviesResult
+import com.example.pruebamoviedb.ui.viewmodels.DetailsViewModel
+import com.example.pruebamoviedb.util.RatingBar
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MovieList(movies: MoviesList, onMovieClick: (String) -> Unit) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+fun DetailsScreen() {
 
-        }
-    }
-}
+    val detailsViewModel = hiltViewModel<DetailsViewModel>()
+    val detailsState = detailsViewModel.detailsState.collectAsState().value
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MovieCard(movieTitle: String, movieImage: Int, onMovieClick: () -> Unit) {
-    Card(
+    val posterImageState = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(MoviesAPIService.IMAGE_BASE_URL + detailsState.movie?.poster_path)
+            .size(Size.ORIGINAL)
+            .build()
+    ).state
+
+    Column(
         modifier = Modifier
-            .padding(16.dp)
-            .clickable(onClick = onMovieClick)
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
-            Image(
-                painter = painterResource(id = movieImage),
-                contentDescription = null,
+            Box(
                 modifier = Modifier
-                    .size(200.dp),
-                contentScale = ContentScale.Crop
-            )
+                    .width(240.dp)
+                    .height(360.dp)
+            ) {
+                if (posterImageState is AsyncImagePainter.State.Error) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.primaryContainer),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(70.dp),
+                            imageVector = Icons.Rounded.ImageNotSupported,
+                            contentDescription = detailsState.movie?.title
+                        )
+                    }
+                }
+
+                if (posterImageState is AsyncImagePainter.State.Success) {
+                    Image(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(12.dp)),
+                        painter = posterImageState.painter,
+                        contentDescription = detailsState.movie?.title,
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+
+            detailsState.movie?.let { movie ->
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp),
+                        text = movie.title,
+                        fontSize = 19.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                    ) {
+                        RatingBar(
+                            starsModifier = Modifier.size(18.dp),
+                            rating = movie.vote_average / 2
+                        )
+
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = movie.vote_average.toString().take(3),
+                            color = Color.LightGray,
+                            fontSize = 14.sp,
+                            maxLines = 1,
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp),
+                        text = stringResource(R.string.language) + movie.original_language
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp),
+                        text = stringResource(R.string.release_date) + movie.release_date
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp),
+                        text = stringResource(R.string.votes) + movie.vote_count
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            modifier = Modifier.padding(start = 16.dp),
+            text = stringResource(R.string.overview),
+            fontSize = 19.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        detailsState.movie?.let {
             Text(
-                text = movieTitle,
-                style = MaterialTheme.typography.bodyLarge
+                modifier = Modifier.padding(start = 16.dp),
+                text = it.overview,
+                fontSize = 16.sp,
             )
         }
+
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }

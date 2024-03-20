@@ -12,16 +12,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.pruebamoviedb.ui.screens.MovieListScreen
-import com.example.pruebamoviedb.ui.viewmodels.MoviesListViewModel
-import com.example.pruebamoviedb.ui.viewmodels.MoviesViewModel
+import androidx.navigation.navArgument
+import com.example.pruebamoviedb.ui.screens.DetailsScreen
+import com.example.pruebamoviedb.ui.screens.HomeScreen
+import com.example.pruebamoviedb.util.Screen
 import dagger.hilt.android.AndroidEntryPoint
+
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -33,14 +38,26 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val listViewModel: MoviesListViewModel = hiltViewModel()
-                    val detailViewModel: MoviesViewModel = hiltViewModel()
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "MovieListScreen") {
-                        composable("MovieListScreen") { MovieListScreen(listViewModel, detailViewModel, navController,  isDarkTheme,) }
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.Home.rout
+                    ) {
+                        composable(Screen.Home.rout) {
+                            HomeScreen(navController)
+                        }
+                        composable(
+                            Screen.Details.rout + "/{movieId}",
+                            arguments = listOf(
+                                navArgument("movieId") { type = NavType.IntType }
+                            )
+                        ) { backStackEntry ->
+                            DetailsScreen()
+                        }
                     }
-                }
                 }
             }
         }
     }
+}
